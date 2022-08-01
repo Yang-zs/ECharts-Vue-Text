@@ -1,10 +1,10 @@
 import request from '@/utils/request'
-const getSellerData = () => {
+const getTrendData = () => {
   return request({
-    url: 'seller',
+    url: 'trend',
     method: 'GET',
   })
 }
 export default {
-  getSellerData,
+  getTrendData,
 }
