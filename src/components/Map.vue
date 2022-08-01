@@ -74,6 +74,7 @@ export default {
           // console.log(ret,'ret')
           this.$echarts.registerMap(provinceInfo.key, ret.data)
         }
+        const res = 10
         const changeOption = {
           geo:{
             map:provinceInfo.key
