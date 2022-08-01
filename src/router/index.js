@@ -18,6 +18,16 @@ const routes = [
     path: '/mappage',
     name:'mappage',
     component:()=>import('@/views/MapPage.vue')
+  },
+  {
+    path:'/rankpage',
+    name:'rankpage',
+    component:()=>import('@/views/RankPage.vue')
+  },
+  {
+    path:'/hotpage',
+    name:'hotpage',
+    component:()=>import('@/views/HotPage.vue')
   }
 ]
 

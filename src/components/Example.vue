@@ -1,3 +1,4 @@
+<!--初始化样板-->
 <template>
   <div class="com-container">
     <div class="com-chart" ref="map_ref"></div>
@@ -29,18 +30,19 @@ export default {
     initChart(){
       this.chartInstance = this.$echarts.init(this.$refs.map_ref)
       const initOption = {}
-      this.chartInstance.setOption(this.getOption())
+      this.chartInstance.setOption(initOption)
     },
     // 获取接口数据
     async getData(){
       const res = await getMapData()
       console.log(res,'res')
-      this.allData = res.data;
+      this.allData = res
+      this.updateChart()
     },
     //  更新图表
     updateChart(){
       const dataOption = {}
-      this.chartInstance.setOption(this.getOption())
+      this.chartInstance.setOption(dataOption)
     },
     //  分辨率适配
     screenAdapter(){

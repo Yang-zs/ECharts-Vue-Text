@@ -1,11 +1,179 @@
+<!--初始化样板-->
 <template>
-  <div>
-    Hot.vue
+  <div class="com-container">
+    <div class="com-chart" ref="hot_ref"></div>
+    <span class="iconfont arr-left" @click="toLeft">&#xe6ef;</span>
+    <span class="iconfont arr-right" @click="toRight" >&#xe6ed;</span>
+    <span class="cat-name">{{ catName }}</span>
   </div>
 </template>
 
 <script>
-export default {}
+import { getHot } from '@/api/hot'
+export default {
+  data(){
+    return {
+      chartInstance:null,
+      allData:null,
+      currentIndex:0, // 当前分类
+    }
+  },
+  created() {
+  },
+  mounted(){
+    this.initChart()
+    this.getData()
+    window.addEventListener('resize', this.screenAdapter)
+    this.screenAdapter()
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.screenAdapter)
+  },
+  computed: {
+    catName(){
+      if(!this.allData){
+        return ''
+      }else {
+        return this.allData[this.currentIndex].name
+      }
+    }
+  },
+  methods:{
+    // 初始化地图
+    initChart(){
+      this.chartInstance = this.$echarts.init(this.$refs.hot_ref,'chalk')
+      const initOption = {
+        title:{
+          text:'热销商品的占比',
+          left:20,
+          top:20,
+        },
+        tooltip:{
+          show:true,
+          formatter:(arg)=>{
+            const  thirdCategory = arg.data.children
+            let total = 0
+            thirdCategory.forEach(item=>{
+              total += item.value
+            })
+            let retStr = ''
+            thirdCategory.forEach(item=>{
+              retStr += `${item.name}:${parseInt(item.value/total*100) + '%'}  <br/>`
+            })
+            return  retStr
+          }
+        },
+        legend: {
+          top:'5%',
+          icon:'circle',
+        },
+        series: [
+          {
+            type:'pie',
+            label: {
+                show: false,
+            },
+            emphasis:{
+              label:{
+                show:true
+              },
+              labelLine:{
+                show:false
+              }
+            }
+          }
+        ]
+      }
+      this.chartInstance.setOption(initOption)
+      this.updateChart()
+    },
+    // 获取接口数据
+    async getData(){
+      this.allData = await getHot()
+      // console.log(this.allData,'this.allData')
+      this.updateChart()
+    },
+    //  更新图表
+    updateChart(){
+      if(!this.allData) return
+      const legendData = this.allData[this.currentIndex].children.map(item=>item.name)
+      // console.log(this.allData,'this.allData')
+      const seriesData = this.allData && this.allData[this.currentIndex].children.map(v=>{
+        return {
+          name:v.name,
+          value:v.value,
+          children:v.children
+        }
+      })
+      const dataOption = {
+        legend:{
+          data:legendData
+        },
+        series:[
+          {
+            data:seriesData
+          }
+        ],
+            }
+      this.chartInstance.setOption(dataOption)
+    },
+    //  分辨率适配
+    screenAdapter(){
+      const titleFontSize = this.$refs.hot_ref.offsetWidth / 100 * 3.6
+      const adapterOption = {
+        title: {
+          textStyle: {
+            fontSize: titleFontSize
+          }
+        },
+
+      };
+      this.chartInstance.setOption(adapterOption);
+      this.chartInstance.resize();
+    },
+    toLeft(){
+      this.currentIndex--
+      if(this.currentIndex<0){
+        this.currentIndex = this.allData.length-1
+      }
+      this.updateChart()
+    },
+    toRight(){
+      this.currentIndex++
+      if(this.currentIndex > this.allData.length-1){
+        this.currentIndex = 0
+      }
+      this.updateChart()
+    }
+
+
+  }
+}
 </script>
 
-<style scoped></style>
+<style scoped>
+.arr-left{
+ position: absolute;
+  left: 10%;
+  top:50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 50px;
+  color: white;
+}
+.arr-right{
+  position: absolute;
+  right: 10%;
+  top:50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 50px;
+  color: white;
+}
+.cat-name{
+  position: absolute;
+  left: 80%;
+  bottom: 20px;
+  color: white;
+}
+</style>

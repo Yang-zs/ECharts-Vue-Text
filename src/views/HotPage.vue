@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <hot></hot>
+  <div class="com-page">
+    <Hot></Hot>
   </div>
 </template>
 
