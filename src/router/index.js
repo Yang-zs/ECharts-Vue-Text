@@ -28,6 +28,11 @@ const routes = [
     path:'/hotpage',
     name:'hotpage',
     component:()=>import('@/views/HotPage.vue')
+  },
+  {
+    path:'/stockpage',
+    name:'stockpage',
+    component:()=>import('@/views/StockPage.vue')
   }
 ]
 

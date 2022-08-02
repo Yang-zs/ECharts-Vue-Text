@@ -2,9 +2,9 @@
 <template>
   <div class="com-container">
     <div class="com-chart" ref="hot_ref"></div>
-    <span class="iconfont arr-left" @click="toLeft">&#xe6ef;</span>
-    <span class="iconfont arr-right" @click="toRight" >&#xe6ed;</span>
-    <span class="cat-name">{{ catName }}</span>
+    <span class="iconfont arr-left" @click="toLeft" :style="comStyle">&#xe6ef;</span>
+    <span class="iconfont arr-right" @click="toRight" :style="comStyle">&#xe6ed;</span>
+    <span class="cat-name" :style="comStyle">{{ catName }}</span>
   </div>
 </template>
 
@@ -16,6 +16,7 @@ export default {
       chartInstance:null,
       allData:null,
       currentIndex:0, // 当前分类
+      titleFontSize:0
     }
   },
   created() {
@@ -35,6 +36,11 @@ export default {
         return ''
       }else {
         return this.allData[this.currentIndex].name
+      }
+    },
+    comStyle() {
+      return {
+       fontsize:this.titleFontSize + 'px'
       }
     }
   },
@@ -64,7 +70,7 @@ export default {
           }
         },
         legend: {
-          top:'5%',
+          top:'15%',
           icon:'circle',
         },
         series: [
@@ -119,18 +125,33 @@ export default {
     },
     //  分辨率适配
     screenAdapter(){
-      const titleFontSize = this.$refs.hot_ref.offsetWidth / 100 * 3.6
+      this.titleFontSize = this.$refs.hot_ref.offsetWidth / 100 * 3.6
       const adapterOption = {
         title: {
           textStyle: {
-            fontSize: titleFontSize
+            fontSize: this.titleFontSize
           }
         },
+        legend:{
+          itemWidth:this.titleFontSize / 2,
+          itemHeight:this.titleFontSize / 2,
+          itemGap:this.titleFontSize / 2,
+          textStyle: {
+           fontSize: this.titleFontSize / 2
+          }
+        },
+        series:[
+          {
+            radius:this.titleFontSize *  4.5,
+            center:['50%','50%']
+          }
+        ]
 
       };
       this.chartInstance.setOption(adapterOption);
       this.chartInstance.resize();
     },
+    // 向左翻页
     toLeft(){
       this.currentIndex--
       if(this.currentIndex<0){
@@ -138,6 +159,7 @@ export default {
       }
       this.updateChart()
     },
+    // 向右翻页
     toRight(){
       this.currentIndex++
       if(this.currentIndex > this.allData.length-1){

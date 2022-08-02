@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <stock></stock>
+  <div class="com-page">
+    <Stock></Stock>
   </div>
 </template>
 
