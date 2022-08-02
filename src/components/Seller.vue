@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import SellerApi from '@/api/seller'
 export default {
   data() {
@@ -19,6 +20,17 @@ export default {
       currentPage: 1, // 当前显示的页数
       totalPage: 0, // 总页数
       timerId: null,
+    }
+  },
+  computed: {
+    ...mapState(['theme'])
+  },
+  watch: {
+    theme () {
+      this.chartInstance.dispose()
+      this.initChart()
+      this.screenAdapter()
+      this.updateChart()
     }
   },
   mounted() {
@@ -35,7 +47,7 @@ export default {
   methods: {
     // 初始化
     initChart() {
-      this.chartInstance = this.$echarts.init(this.$refs.sellerRef, 'chalk')
+      this.chartInstance = this.$echarts.init(this.$refs.sellerRef, this.theme)
       const initOption = {
         title: {
           text: '▮ 商家销售统计',

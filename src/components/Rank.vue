@@ -5,6 +5,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import { getThemeValue } from '@/utils/theme_utils'
 import { getRank } from '@/api/rank'
 export default {
   data(){
@@ -17,6 +19,18 @@ export default {
     }
   },
   created() {
+  },
+  computed:{
+    ...mapState(['theme'])
+
+  },
+  watch: {
+    theme () {
+      this.chartInstance.dispose()
+      this.initChart()
+      this.screenAdapter()
+      this.updateChart()
+    }
   },
   mounted(){
     this.initChart()
@@ -31,7 +45,7 @@ export default {
   methods:{
     // 初始化地图
     initChart(){
-      this.chartInstance = this.$echarts.init(this.$refs.rank_ref, 'chalk')
+      this.chartInstance = this.$echarts.init(this.$refs.rank_ref, this.theme)
       const initOption = {
         title:{
           text:'《地区销售排行》',

@@ -1,9 +1,17 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
+import ScreenPage from "@/views/ScreenPage";
 Vue.use(VueRouter)
 
 const routes = [
+  {
+    path: '/',
+    redirect: '/screen'
+  },
+  {
+    path: '/screen',
+    component: ScreenPage
+  },
   {
     path: '/sellerpage',
     name: 'sellerpage',

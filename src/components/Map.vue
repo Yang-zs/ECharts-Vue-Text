@@ -9,6 +9,9 @@
 import {getChinaMapData, getMapData} from '@/api/map'
 import {getProvinceMapInfo} from '@/tool/map_utils'
 import axios from "axios";
+import { mapState } from 'vuex'
+import { getThemeValue } from '@/utils/theme_utils'
+
 export default {
   data(){
     return {
@@ -18,6 +21,29 @@ export default {
     }
   },
   created() {
+  },
+  computed:{
+    ...mapState(['theme']),
+    comStyle() {
+      return {
+        fontsize:this.titleFontSize + 'px',
+        color: getThemeValue(this.theme).titleColor
+      }
+    },
+    marginStyle () {
+      return {
+        marginLeft: this.titleFontSize + 'px',
+        backgroundColor: getThemeValue(this.theme).backgroundColor,
+        color: getThemeValue(this.theme).titleColor
+      }
+    },
+  },
+    comStyle () {
+      return {
+        fontSize: this.titleFontSize + 'px',
+        color: getThemeValue(this.theme).titleColor
+      }
+
   },
   mounted(){
     this.initChart()
@@ -32,7 +58,7 @@ export default {
   methods:{
     // 初始化地图
     async initChart(){
-      this.chartInstance = this.$echarts.init(this.$refs.map_ref,'chalk')
+      this.chartInstance = this.$echarts.init(this.$refs.map_ref,this.theme)
       // 获取中国地图
       const ret = await getChinaMapData()
       this.$echarts.registerMap('china', ret)
@@ -147,6 +173,15 @@ export default {
       })
     }
 
+  },
+  watch: {
+    theme () {
+      console.log('主题切换了')
+      this.chartInstance.dispose() // 销毁当前的图表
+      this.initChart() // 重新以最新的主题名称初始化图表对象
+      this.screenAdapter() // 完成屏幕的适配
+      this.updateChart() // 更新图表的展示
+    }
   }
 }
 </script>

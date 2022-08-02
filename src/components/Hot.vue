@@ -10,6 +10,8 @@
 
 <script>
 import { getHot } from '@/api/hot'
+import { mapState } from 'vuex'
+import { getThemeValue } from '@/utils/theme_utils'
 export default {
   data(){
     return {
@@ -21,6 +23,14 @@ export default {
   },
   created() {
   },
+  watch: {
+    theme () {
+      this.chartInstance.dispose()
+      this.initChart()
+      this.screenAdapter()
+      this.updateChart()
+    }
+  },
   mounted(){
     this.initChart()
     this.getData()
@@ -31,6 +41,7 @@ export default {
     window.removeEventListener('resize', this.screenAdapter)
   },
   computed: {
+    ...mapState(['theme']),
     catName(){
       if(!this.allData){
         return ''
@@ -40,14 +51,15 @@ export default {
     },
     comStyle() {
       return {
-       fontsize:this.titleFontSize + 'px'
+       fontsize:this.titleFontSize + 'px',
+        color: getThemeValue(this.theme).titleColor
       }
     }
   },
   methods:{
     // 初始化地图
     initChart(){
-      this.chartInstance = this.$echarts.init(this.$refs.hot_ref,'chalk')
+      this.chartInstance = this.$echarts.init(this.$refs.hot_ref,this.theme)
       const initOption = {
         title:{
           text:'热销商品的占比',
@@ -125,7 +137,7 @@ export default {
     },
     //  分辨率适配
     screenAdapter(){
-      this.titleFontSize = this.$refs.hot_ref.offsetWidth / 100 * 3.6
+      this.titleFontSize = this.$refs.hot_ref.offsetWidth / 100 * 2.5
       const adapterOption = {
         title: {
           textStyle: {
